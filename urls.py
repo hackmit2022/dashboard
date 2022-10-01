@@ -13,4 +13,9 @@ def get_difficulty():
 
 def wallet_info(wallet_address):
     """Get the wallet information."""
-    return requests.get(wallet.format(wallet_address=wallet_address)).json()
+    res = requests.get(wallet.format(wallet_address=wallet_address))
+    if res.status_code == 429:
+        raise Exception("Rate limiting...")
+    if res.status_code == 404:
+        raise Exception("Invalid wallet address")
+    return res.json()
