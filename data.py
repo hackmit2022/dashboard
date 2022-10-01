@@ -1,3 +1,4 @@
+from typing import List, Tuple
 from pydantic import BaseModel, Field
 from datetime import datetime
 from urls import wallet_info, get_difficulty
@@ -16,14 +17,14 @@ class Difficulty(BaseModel):
         ]
         super().__init__(values=values, **data)
 
-    values: list[tuple[datetime, int]]
+    values: List[Tuple[datetime, int]]
 
 
 class Transaction(BaseModel):
     hash: str
     time: datetime
-    inputs: list[dict]
-    out: list[dict]
+    inputs: List[dict]
+    out: List[dict]
 
     @property
     def fee(self):
@@ -37,7 +38,7 @@ class WalletInfo(BaseModel):
     def from_hash(cls, hash: str):
         return cls(**wallet_info(hash))
 
-    transactions: list[Transaction] = Field(..., alias="txs")
+    transactions: List[Transaction] = Field(..., alias="txs")
     total_sent: int
     total_received: int
     final_balance: int
