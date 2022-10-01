@@ -1,5 +1,6 @@
 from dash import Dash, dcc, html, Input, Output
 from data import close_diff, Difficulty, WalletInfo
+from C02_per_block import calculate_CO2_per_block
 
 app = Dash(__name__)
 
@@ -28,7 +29,12 @@ def update_wallet_display(hash):
 
     [html.P(hash)]
 
-    return [html.P(f"{t.fee} - {close_diff(t, diff)}") for t in wi.transactions]
+    return [
+        html.P(
+            f"{ti[0].time} - {ti[0].fee} - {ti[1]} - {calculate_CO2_per_block(ti[1]):.9}"
+        )
+        for ti in ((t, close_diff(t, diff)) for t in wi.transactions)
+    ]
 
 
 app.run_server(debug=True)
