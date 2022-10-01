@@ -12,6 +12,7 @@ class Difficulty(BaseModel):
 
 class Transaction(BaseModel):
     hash: str
+    time: datetime
     inputs: list[dict]
     out: list[dict]
 
