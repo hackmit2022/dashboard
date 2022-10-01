@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import Dict, List, Tuple
 from pydantic import BaseModel, Field
 from datetime import datetime
 from urls import wallet_info, get_difficulty
@@ -11,7 +11,7 @@ class Difficulty(BaseModel):
     def from_source(cls):
         return cls(**get_difficulty())
 
-    def __init__(self, *, values: list[dict[str, int]], **data):
+    def __init__(self, *, values: List[Dict[str, int]], **data):
         values = [
             (datetime.fromtimestamp(dic["x"], tz=pytz.utc), dic["y"]) for dic in values
         ]
