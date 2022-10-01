@@ -25,8 +25,6 @@ def update_wallet_display(hash):
 
     wi = WalletInfo.from_hash(hash)
 
-    print(wi.transactions[20].time)
-
     [html.P(hash)]
 
     return [
