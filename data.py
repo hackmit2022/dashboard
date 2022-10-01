@@ -31,3 +31,8 @@ class WalletInfo(BaseModel):
     total_sent: int
     total_received: int
     final_balance: int
+
+
+def close_diff(transaction: Transaction, diff: Difficulty):
+    day, close_diff = min(diff.values, key=lambda d: abs(d[0] - transaction.time))
+    return close_diff
