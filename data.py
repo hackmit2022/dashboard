@@ -1,9 +1,15 @@
 from pydantic import BaseModel, Field
 from datetime import datetime
+from urls import wallet_info, get_difficulty
+
 import pytz
 
 
 class Difficulty(BaseModel):
+    @classmethod
+    def from_source(cls):
+        return cls(**get_difficulty())
+
     def __init__(self, *, values: list[dict[str, int]], **data):
         values = [
             (datetime.fromtimestamp(dic["x"], tz=pytz.utc), dic["y"]) for dic in values
@@ -27,6 +33,10 @@ class Transaction(BaseModel):
 
 
 class WalletInfo(BaseModel):
+    @classmethod
+    def from_hash(cls, hash: str):
+        return cls(**wallet_info(hash))
+
     transactions: list[Transaction] = Field(..., alias="txs")
     total_sent: int
     total_received: int
