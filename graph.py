@@ -1,9 +1,5 @@
 from dash import Dash, dcc, html, Input, Output
-import plotly.graph_objects as go
-from data import close_diff
-from data import Difficulty
-
-from data import WalletInfo
+from data import close_diff, Difficulty, WalletInfo
 
 app = Dash(__name__)
 
