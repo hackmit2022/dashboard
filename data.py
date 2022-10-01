@@ -1,10 +1,13 @@
 from pydantic import BaseModel, Field
 from datetime import datetime
+import pytz
 
 
 class Difficulty(BaseModel):
     def __init__(self, *, values: list[dict[str, int]], **data):
-        values = [(datetime.fromtimestamp(dic["x"]), dic["y"]) for dic in values]
+        values = [
+            (datetime.fromtimestamp(dic["x"], tz=pytz.utc), dic["y"]) for dic in values
+        ]
         super().__init__(values=values, **data)
 
     values: list[tuple[datetime, int]]
