@@ -1,4 +1,3 @@
-from pprint import pprint
 from data import WalletInfo
 from urls import wallet_info
 
