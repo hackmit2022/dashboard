@@ -40,6 +40,9 @@ def update_wallet_display(hash):
 
     wi = WalletInfo.from_hash(hash)
 
+    if wi is None:
+        return [[], []]
+
     transaction_data = [
         (t, diff, calculate_energy_per_block(diff), calculate_CO2_per_block(diff))
         for t, diff in ((t, close_diff(t, diff)) for t in wi.transactions)

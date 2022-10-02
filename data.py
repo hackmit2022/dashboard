@@ -36,7 +36,10 @@ class Transaction(BaseModel):
 class WalletInfo(BaseModel):
     @classmethod
     def from_hash(cls, hash: str):
-        return cls(**wallet_info(hash))
+        info = wallet_info(hash)
+        if info is None:
+            return None
+        return cls(**info)
 
     transactions: List[Transaction] = Field(..., alias="txs")
     total_sent: int
