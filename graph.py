@@ -19,18 +19,36 @@ app.layout = html.Div(
             ),
             id="input-container",
         ),
-        html.Div("", id="transaction-container"),
+        html.Div(
+            [
+                html.Div("", id="transaction-container"),
+                html.Div("", id="totals-container"),
+            ],
+            id="info-container",
+        ),
     ]
 )
 
 
 @app.callback(
-    Output("transaction-container", "children"), Input("wallet-hash", "value")
+    Output("transaction-container", "children"),
+    Output("totals-container", "children"),
+    Input("wallet-hash", "value"),
 )
 def update_wallet_display(hash):
     print("hash", hash)
 
     wi = WalletInfo.from_hash(hash)
+
+    transaction_data = [
+        (t, diff, calculate_CO2_per_block(diff))
+        for t, diff in ((t, close_diff(t, diff)) for t in wi.transactions)
+    ]
+
+    totals = {
+        "fees": sum(t.fee for t, _, _ in transaction_data),
+        "CO2": sum(co2 for _, _, co2 in transaction_data),
+    }
 
     return [
         dash_table.DataTable(
@@ -38,11 +56,18 @@ def update_wallet_display(hash):
                 {
                     "date": t.time.strftime("%Y-%m-%d"),
                     "fee (sat)": t.fee,
-                    "CO2 (kg)": f"{calculate_CO2_per_block(diff):.8}",
+                    "CO2 (kg)": f"{co2:.8}",
                 }
-                for t, diff in ((t, close_diff(t, diff)) for t in wi.transactions)
+                for t, diff, co2 in transaction_data
             ],
-        )
+        ),
+        [
+            html.H2("Your totals"),
+            html.P(
+                f"Total fees: {totals['fees']/1e8} BTC = {totals['fees']/1e8 * 19158.40:.2f} USD"
+            ),
+            html.P("Total CO2: {:.2f} kg".format(totals["CO2"])),
+        ],
     ]
 
 
