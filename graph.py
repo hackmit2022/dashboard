@@ -1,4 +1,4 @@
-from dash import Dash, dcc, html, Input, Output
+from dash import Dash, dcc, html, Input, Output, dash_table
 from data import close_diff, Difficulty, WalletInfo
 from C02_per_block import calculate_CO2_per_block
 
@@ -9,29 +9,40 @@ diff = Difficulty.from_source()
 
 app.layout = html.Div(
     [
-        dcc.Input(
-            id="wallet-hash", placeholder="wallet address", type="text", debounce=True
+        html.H4("What's your impact?", id="impact"),
+        html.Div(
+            dcc.Input(
+                id="wallet-hash",
+                placeholder="wallet address",
+                type="text",
+                debounce=True,
+            ),
+            id="input-container",
         ),
-        html.H4("Interactive color selection with simple Dash example"),
-        html.P("Select color:"),
-        html.P("bruh", id="main-content"),
+        html.Div("", id="transaction-container"),
     ]
 )
 
 
-@app.callback(Output("main-content", "children"), Input("wallet-hash", "value"))
+@app.callback(
+    Output("transaction-container", "children"), Input("wallet-hash", "value")
+)
 def update_wallet_display(hash):
     print("hash", hash)
 
     wi = WalletInfo.from_hash(hash)
 
-    [html.P(hash)]
-
     return [
-        html.P(
-            f"{ti[0].time} - {ti[0].fee} - {ti[1]} - {calculate_CO2_per_block(ti[1]):.9}"
+        dash_table.DataTable(
+            data=[
+                {
+                    "date": t.time.strftime("%Y-%m-%d"),
+                    "fee (sat)": t.fee,
+                    "CO2 (kg)": f"{calculate_CO2_per_block(diff):.8}",
+                }
+                for t, diff in ((t, close_diff(t, diff)) for t in wi.transactions)
+            ],
         )
-        for ti in ((t, close_diff(t, diff)) for t in wi.transactions)
     ]
 
 
