@@ -9,7 +9,7 @@ diff = Difficulty.from_source()
 
 app.layout = html.Div(
     [
-        html.H4("What's your impact?", id="impact"),
+        html.H1("What's your impact?", id="impact"),
         html.Div(
             dcc.Input(
                 id="wallet-hash",
